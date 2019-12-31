@@ -53,7 +53,7 @@ void MinimumCostPerfectMatchingExample(string filename)
 	
 	//Read the graph
 	pair< Graph, vector<double> > p = ReadWeightedGraph(filename);
-	//pair< Graph, vector<double> > p = CreateRandomGraph();
+	
 	G = p.first;
 	cost = p.second;
 
@@ -69,13 +69,13 @@ void MinimumCostPerfectMatchingExample(string filename)
 	ofstream file;
 	file.open("output.txt");
 
-	cout << "Optimal matching cost: " << obj << endl;
-	cout << "Edges in the matching:" << endl;
+	// cout << "Optimal matching cost: " << obj << endl;
+	// cout << "Edges in the matching:" << endl;
 	for(list<int>::iterator it = matching.begin(); it != matching.end(); it++)
 	{
 		pair<int, int> e = G.GetEdge( *it );
 
-		cout << e.first << " " << e.second << endl;
+		// cout << e.first << " " << e.second << endl;
 		file << e.first << " " << e.second << endl;
 	}
 
@@ -118,8 +118,6 @@ int main(int argc, char* argv[])
 	{
 		if(algorithm == "minweight")
 			MinimumCostPerfectMatchingExample(filename);
-		else
-			MaximumMatchingExample(filename);
 	}
 	catch(const char * msg)
 	{
