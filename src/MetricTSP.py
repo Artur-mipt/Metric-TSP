@@ -3,6 +3,8 @@
 
 import numpy as np
 from heapq import heappush, heappop, heapify
+import os
+
 
 class MetricTSP:
 
@@ -63,69 +65,40 @@ class MetricTSP:
 	# минимальное совершенное паросочетание
 	def min_perfect_matching(self):
 		odd_nodes = self.odd_mst_nodes()
-		graph = self.graph[odd_nodes, :][:, odd_nodes]  # подграф на нечетных вершинах
-		n = len(graph)
-		for i in range(n):
-			graph[i, i] = np.inf
-		graph = np.hstack((np.zeros((n, 1)), graph))
-		graph = np.concatenate((np.zeros((1, n + 1)), graph))
+		arr = self.graph[odd_nodes, :][:, odd_nodes]  # подграф на нечетных вершинах
+		
+		v = len(arr)
+		res = str(v) + '\n'
+		res += str(int(v*(v-1)/2)) + '\n'
+		for i in range(v):
+			for j in range(v):
+				if i < j:
+					res += str(i) + ' ' + str(j) \
+							+ ' ' + str(arr[i, j]) + '\n'
 
-		u = np.zeros(n + 1)
-		v = np.zeros(n + 1)
-		p = np.zeros(n + 1)
-		way = np.zeros(n + 1)
+		with open('../min_cost_perfect_matching/input.txt', 'w') as f:
+			f.write(res)
 
-		for i in np.arange(1, n + 1):
-			p[0] = i
-			j0 = 0
-			minv = np.ones(n + 1) * np.inf
-			used = np.zeros(n + 1).astype('bool')
+		os.system('g++ -O3 ../min_cost_perfect_matching/Example.cpp \
+					../min_cost_perfect_matching/BinaryHeap.cpp \
+					../min_cost_perfect_matching/Matching.cpp \
+					../min_cost_perfect_matching/Graph.cpp \
+					-o ../min_cost_perfect_matching/example')
 
-			while True:
-				used[j0] = True
-				i0 = p[j0]
-				delta = np.inf
-				j1 = 0
-				for j in np.arange(1, n + 1):
-					if used[j] == False:
-						i0 = int(i0)
-						cur = graph[i0][int(j)] - u[i0] - v[int(j)]
-						if cur < minv[j]:
-							minv[j] = cur
-							way[j] = j0
-						if minv[j] < delta:
-							delta = minv[j]
-							j1 = j
-				for j in np.arange(0, n + 1):
-					if used[j] == True:
-						u[int(p[j])] += delta
-						v[j] -= delta
-					else:
-						minv[j] -= delta
-				j0 = j1
-
-				if p[j0] == 0:
-					break
-
-			while True:
-				j0 = int(j0)
-				j1 = way[j0]
-				p[j0] = p[int(j1)]
-				j0 = j1
-
-				if j0 == 0:
-					break
-
-		res = np.zeros(n + 1)
-		for j in np.arange(1, n + 1):
-			res[int(p[j])] = j
+		os.system('./../min_cost_perfect_matching/example \
+					-f ../min_cost_perfect_matching/input.txt \
+					--minweight')
 
 		edges = []
-		for j in np.arange(1, n + 1):
-			edge = sorted([j, int(res[j])])
-			res[int(res[j])] = j
-			edges.append((odd_nodes[edge[0] - 1],
-						  odd_nodes[edge[1] - 1]))
+
+		with open('output.txt', 'r') as f:
+			line = f.readline()
+			while line:
+				u = int(line.split(' ')[0])
+				v = int(line.split(' ')[1][:-1])
+				edges.append((u, v))
+				line = f.readline()
+
 		edges = list(set(edges))
 		print('min_perfect_matching: ', edges)
 		return edges
@@ -164,4 +137,4 @@ class MetricTSP:
 
 		# удаляем повторяющиеся вершины, получаем гам. цикл		
 		ham_cycle = list(dict.fromkeys(eul_cycle)) + [eul_cycle[0]]
-		print('ham_cycle: ', ham_cycle) 
+		print('ham_cycle: ', ham_cycle)
