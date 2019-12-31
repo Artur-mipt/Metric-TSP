@@ -7,62 +7,6 @@
 #include <sstream>
 using namespace std;
 
-pair< Graph, vector<double> > CreateRandomGraph()
-{
-	//random seed
-	int x;
-	cin >> x;
-	srand( x );
-
-	//Please see Graph.h for a description of the interface
-	int n = 50;
-
-	Graph G(n);
-	vector<double> cost;
-	for(int i = 0; i < n; i++)
-		for(int j = i+1; j < n; j++)
-			if(rand()%10 == 0)
-			{
-				G.AddEdge(i, j);
-				cost.push_back(rand()%1000);
-			}
-
-	return make_pair(G, cost);
-}
-
-Graph ReadGraph(string filename)
-{
-	//Please see Graph.h for a description of the interface
-
-	ifstream file;
-	file.open(filename.c_str());
-
-	string s;
-	getline(file, s);
-	stringstream ss(s);
-	int n;
-	ss >> n;
-	getline(file, s);
-	ss.str(s);
-	ss.clear();
-	int m;
-	ss >> m;
-
-	Graph G(n);
-	for(int i = 0; i < m; i++)
-	{
-		getline(file, s);
-		ss.str(s);
-		ss.clear();
-		int u, v;
-		ss >> u >> v;
-
-		G.AddEdge(u, v);
-	}
-
-	file.close();
-	return G;
-}
 
 pair< Graph, vector<double> > ReadWeightedGraph(string filename)
 {
@@ -101,6 +45,7 @@ pair< Graph, vector<double> > ReadWeightedGraph(string filename)
 	return make_pair(G, cost);
 }
 
+
 void MinimumCostPerfectMatchingExample(string filename)
 {
 	Graph G;
@@ -137,23 +82,6 @@ void MinimumCostPerfectMatchingExample(string filename)
 	file.close();
 }
 
-void MaximumMatchingExample(string filename)
-{
-	Graph G = ReadGraph(filename);
-	Matching M(G);
-
-	list<int> matching;
-	matching = M.SolveMaximumMatching();
-
-	cout << "Number of edges in the maximum matching: " << matching.size() << endl;
-	cout << "Edges in the matching:" << endl;
-	for(list<int>::iterator it = matching.begin(); it != matching.end(); it++)
-	{
-		pair<int, int> e = G.GetEdge( *it );
-
-		cout << e.first << " " << e.second << endl;
-	}
-}
 
 int main(int argc, char* argv[])
 {
