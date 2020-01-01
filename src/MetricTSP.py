@@ -138,3 +138,5 @@ class MetricTSP:
 		# удаляем повторяющиеся вершины, получаем гам. цикл		
 		ham_cycle = list(dict.fromkeys(eul_cycle)) + [eul_cycle[0]]
 		print('ham_cycle: ', ham_cycle)
+
+		return ham_cycle
